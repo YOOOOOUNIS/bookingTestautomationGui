@@ -20,13 +20,17 @@ public class FlowTest extends BaseTests {
     @Test
     public void testMakingOrderFlow() {
 
-        homePage.setLocationField("Alexandria");
+        homePage.setLocationField("Tolip Hotel Alexandria");
         homePage.openCalendar();
         homePage.setCheckInDate("2025-10-01");
         homePage.setCheckOutDate("2025-10-14");
         SearchPage searchPage = homePage.clickOnSearchButton();
-//
-//
+        HotelDetailsPage hotelDetailsPage = searchPage.clickOnHotel("Tolip");
+        hotelDetailsPage.selectTwoTwinBed();
+        hotelDetailsPage.selectAmount();
+        hotelDetailsPage.reserve();
+
+
 //        // Fetch mock user data (index 0) from JSONPlaceholder via utility class
 //        MockUserDataFetcher.UserData userData = MockUserDataFetcher.getUserData(0);
 //

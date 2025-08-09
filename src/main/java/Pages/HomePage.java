@@ -33,24 +33,27 @@ public class HomePage {
 
     public void setCheckInDate (String startDate){
 
-        while (driver.findElements(By.cssSelector("span[data-date='" + startDate + "']")).isEmpty()) {
+        By startDateElement = By.cssSelector("span[data-date='" + startDate + "']");
+
+        while (driver.findElements(startDateElement).isEmpty()) {
             driver.findElement(By.cssSelector("button[aria-label='Next month']")).click();
         }
 
-        By checkInDate =By.cssSelector("span[data-date='" + startDate + "']");
         explicitWait(driver, ExpectedConditions.elementToBeClickable(calendar), 10L);
-        driver.findElement(checkInDate).click();
+        driver.findElement(startDateElement).click();
     }
 
     public void setCheckOutDate (String endDate){
 
-        while (driver.findElements(By.cssSelector("span[data-date='" + endDate + "']")).isEmpty()) {
+        By endDateElement =  By.cssSelector("span[data-date='" + endDate + "']");
+
+        while (driver.findElements(endDateElement).isEmpty()) {
             driver.findElement(By.cssSelector("button[aria-label='Next month']")).click();
         }
 
-        By checkOutDate =  By.cssSelector("span[data-date='" + endDate + "']");
+
         explicitWait(driver, ExpectedConditions.elementToBeClickable(calendar), 10L);
-        driver.findElement(checkOutDate).click();
+        driver.findElement(endDateElement).click();
     }
 
     public SearchPage clickOnSearchButton() {
