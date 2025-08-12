@@ -6,11 +6,11 @@ import kong.unirest.Unirest;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
 
-
 public class MockUserDataFetcher {
 
     public static UserData getUserData(int userIndex) {
-        HttpResponse<JsonNode> response = Unirest.get("https://jsonplaceholder.typicode.com/users")
+        HttpResponse<JsonNode> response = Unirest
+                .get("https://jsonplaceholder.typicode.com/users")
                 .asJson();
 
         JSONArray users = response.getBody().getArray();

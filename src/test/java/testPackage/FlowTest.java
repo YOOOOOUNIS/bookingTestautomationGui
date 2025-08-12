@@ -5,77 +5,57 @@ import base.BaseTests;
 import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-import utils.MockUserDataFetcher;
+import utils.ExcelUtils;
+import utils.PathUtils;
 
+import java.io.IOException;
 
 public class FlowTest extends BaseTests {
 
-
     @BeforeClass
-    public void setUp() {
+    public void setUp() {}
+
+    @DataProvider(name = "hotelData")
+    public Object[][] getHotelData() throws IOException {
+        String filePath = PathUtils.getTestFileAbsolutePath();
+        return ExcelUtils.readExcelData(filePath, "Sheet1");
     }
 
-
-    @Test
-    public void testMakingOrderFlow() {
-
-        homePage.setLocationField("Tolip Hotel Alexandria");
+    @Test(dataProvider = "hotelData")
+    public void testReserveTolipHotel(String location, String checkIn, String checkOut) {
+        homePage.setLocationField(location);
         homePage.openCalendar();
-        homePage.setCheckInDate("2025-10-01");
-        homePage.setCheckOutDate("2025-10-14");
+        homePage.setCheckInDate(checkIn);
+        homePage.setCheckOutDate(checkOut);
+
         SearchPage searchPage = homePage.clickOnSearchButton();
-        HotelDetailsPage hotelDetailsPage = searchPage.clickOnHotel("Tolip");
+        HotelDetailsPage hotelDetailsPage = searchPage.clickOnHotel(location);
+
+        WebElement checkInDate = hotelDetailsPage.getCheckInDate();
+        WebElement checkOutDate = hotelDetailsPage.getCheckOutDate();
+
+        Assert.assertTrue(
+                checkInDate.getText().contains("Wed, Oct 1"),
+                "Check-in date is wrong"
+        );
+        Assert.assertTrue(
+                checkOutDate.getText().contains("Tue, Oct 14"),
+                "Check-out date is wrong"
+        );
+        System.out.println("Check-in & check-out dates set correctly");
+
         hotelDetailsPage.selectTwoTwinBed();
         hotelDetailsPage.selectAmount();
-        hotelDetailsPage.reserve();
 
+        ReservationPage reservationPage = hotelDetailsPage.reserve();
+        WebElement hotelName = reservationPage.getHotelName();
 
-//        // Fetch mock user data (index 0) from JSONPlaceholder via utility class
-//        MockUserDataFetcher.UserData userData = MockUserDataFetcher.getUserData(0);
-//
-//        // Login to the application
-//
-//        HomePage homePage = loginPage.clickSubmitLoginButton();
-//
-//        // Add two items to the cart
-//        homePage.addSauceLabsFleeceJacketToCart();
-//        SingleProductPage singleProductPage = homePage.clickOnSauceLabsOnesieItem();
-//        singleProductPage.addItemToCart();
-//
-//        // Assert that the cart shows 2 items
-//        WebElement cartItemsElement = singleProductPage.getNumberOfItems();
-//        Assert.assertTrue(cartItemsElement.getText().contains("2"), "Cart item count should be 2");
-//        System.out.println("Items in cart = 2");
-//
-//        // Proceed to checkout
-//        CartPage cartPage = singleProductPage.goToCart();
-//        InfoPage infoPage = cartPage.checkout();
-//
-//        // Fill in checkout information using mock user data
-//        infoPage.setFirstNameField(userData.getFirstName());
-//        infoPage.setLastNameField(userData.getLastName());
-//        infoPage.setPostalCodeField(userData.getZipCode());
-//
-//        // Continue to the overview page
-//        OverviewPage overviewPage = infoPage.clickOnContinue();
-//
-//        // Assert the correct items are in the order summary
-//        WebElement firstItemElement = overviewPage.getFirstItemElement();
-//        Assert.assertTrue(firstItemElement.getText().contains("Sauce Labs Fleece Jacket"), "First item not found");
-//
-//        WebElement secondItemElement = overviewPage.getSecondItemElement();
-//        Assert.assertTrue(secondItemElement.getText().contains("Sauce Labs Onesie"), "Second item not found");
-//
-//        System.out.println("Order details are correct");
-//
-//        // Finish the order
-//        CompletePage completePage = overviewPage.clickOnFinish();
-//
-//        // Confirm successful order
-//        WebElement successfulElement = completePage.checkSuccessfulOrder();
-//        Assert.assertTrue(successfulElement.isDisplayed(), "Order was not successful");
-//
-//        System.out.println("Successful order");
+        Assert.assertTrue(
+                hotelName.getText().contains(location),
+                "Hotel name is wrong"
+        );
+        System.out.println("Hotel name is correct");
     }
 }

@@ -14,13 +14,12 @@ import org.testng.annotations.BeforeMethod;
 
 import java.time.Duration;
 
-
 public class BaseTests {
+
     public static WebDriver driver;
     protected HomePage homePage;
 
-
-    //    site url
+    // Test base URL
     protected String baseUrl = "https://www.booking.com/";
 
     @BeforeMethod
@@ -32,25 +31,25 @@ public class BaseTests {
         driver.manage().window().maximize();
         driver.get(baseUrl);
 
-        // Handle "Sign in, save money" popup if it appears
+        // Close the sign-in popup if it appears
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
         try {
-            WebElement closePopup = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.cssSelector("button[aria-label='Dismiss sign-in info.']")
-            ));
+            WebElement closePopup = wait.until(
+                    ExpectedConditions.elementToBeClickable(
+                            By.cssSelector("button[aria-label='Dismiss sign-in info.']")
+                    )
+            );
             closePopup.click();
-//            System.out.println("Sign-in popup closed.");
+            System.out.println("Sign-in popup closed.");
         } catch (TimeoutException e) {
-//            System.out.println("No sign-in popup appeared.");
+            System.out.println("No sign-in popup appeared.");
         }
 
         homePage = new HomePage(driver);
     }
 
-
-//    @AfterMethod
-//    public void closeBrowser() {
-//        driver.quit();
-//    }
-
+    @AfterMethod
+    public void closeBrowser() {
+        driver.quit();
+    }
 }
